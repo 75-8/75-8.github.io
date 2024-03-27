@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>portal</h1>
+    </header>
+<!-- OANDA Widget BEGIN -->
+<div data-order-book></div>
+<script src="https://widget.oanda.jp/order-book.js" async>{"width":"auto","height":"auto","instrument":"GBP_JPY"}</script>
+<!-- OANDA Widget END -->
+</br>
+<!-- OANDA Widget BEGIN -->
+<div data-volatility></div>
+<script src="https://widget.oanda.jp/volatility.js" async>
+{"instrument":"GBP_JPY"}</script>
+</script>
+<!-- OANDA Widget END -->
+
+<!-- OANDA Widget BEGIN -->
+<div data-value-at-risk></div>
+<script src="https://widget.oanda.jp/value-at-risk.js" async>
+{"instrument":"GBP_JPY"}</script>
+<!-- OANDA Widget END -->
+</br>
+<!-- OANDA Widget BEGIN -->
+<div data-price-comparison></div>
+<script src="https://widget.oanda.jp/price-comparison.js" async>
+{"width":"auto","instrument":"GBP_JPY"}</script>
+<!-- OANDA Widget END -->
+</br>
+<!-- OANDA Widget BEGIN -->
+<div data-var-on-chart></div>
+<script src="https://widget.oanda.jp/var-on-chart.js" async>
+{"width":"auto","instrument":"GBP_JPY"}</script></script>
+<!-- OANDA Widget END -->
+
+</br>
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+  {
+  "interval": "1m",
+  "width": "auto",
+  "isTransparent": false,
+  "height": "450",
+  "symbol": "OANDA:GBPJPY",
+  "showIntervalTabs": true,
+  "displayMode": "multiple",
+  "locale": "ja",
+  "colorTheme": "dark"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
+</br>
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+  {
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "width": "auto",
+  "height": "550",
+  "locale": "ja",
+  "importanceFilter": "-1,0,1",
+  "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+    </main>
+
+    <footer>
+        <p>seto</p>
+    </footer>
+</body>
+</html>
