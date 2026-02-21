@@ -1,69 +1,53 @@
 # portal
 
-`portal` は、**GBP/JPY（ポンド円）を中心とした相場情報を 1 ページに集約表示するシンプルな静的ページ**です。
+GitHub Pages で公開する、GBP/JPY 中心の静的マーケットダッシュボードです。
 
-`index.html` では、OANDA と TradingView の埋め込みウィジェットを読み込み、注文状況・ボラティリティ・VaR・価格比較・テクニカル分析・経済イベントをまとめて確認できる構成になっています。
+## 概要
 
-## 主な機能
+- OANDAで利用していた主要5機能（Order Book / Volatility / Value at Risk / Price Comparison / VaR on Chart）を、静的サイトで扱える形式に再構成
+- TradingView ウィジェット（テクニカル分析 / 経済イベント）を併用
+- サーバーサイドを使わず、GitHub Pages 上で完結して動作
 
-- OANDA Order Book（注文情報）
-- OANDA Volatility（ボラティリティ）
-- OANDA Value at Risk（VaR）
-- OANDA Price Comparison（価格比較）
-- OANDA VaR on Chart（チャート上の VaR）
-- TradingView Technical Analysis（テクニカル分析）
-- TradingView Events（経済イベント）
+## OANDA機能の代替実装
 
-## 技術構成
+- Order Book → Market Pressure（上昇/下落日数比を BUY/SELL バー化）
+- Volatility → 20日ヒストリカルボラティリティ（年率換算）
+- Value at Risk → ヒストリカル法で 95% / 99% VaR 算出
+- Price Comparison → GBP/JPY, USD/JPY, EUR/JPY のクロス比較
+- VaR on Chart → GBP/JPY 終値ライン + 95%VaR 閾値ライン
 
-- HTML（`index.html`）
-- 外部埋め込みスクリプト
-  - `widget.oanda.jp`
-  - `s3.tradingview.com`
+## データソース
+
+- Frankfurter API（為替時系列）
+  - `https://api.frankfurter.app/`
+- TradingView 埋め込みウィジェット
+  - テクニカル分析 / 経済イベント
+
+## ハーネス設計
+
+金融投資アイデアの検証フローを分離したハーネスを `harness/` 配下に作成しています。
+
+- `harness/README.md`: 運用ルールと全体構造
+- `harness/01_idea_backlog`〜`09_review`: ライフサイクル別の保管場所
+- `harness/templates`: 仮説 / バックテスト / レビュー テンプレート
 
 ## ファイル構成
 
 ```text
 .
+├── harness/
 ├── index.html
-├── LICENSE
-└── README.md
+├── styles.css
+├── plan.md
+├── README.md
+└── LICENSE
 ```
 
-## 使い方
+## 注意
 
-### 1. ローカルで開く
-
-最小構成の静的ページなので、`index.html` をブラウザで直接開くだけでも表示できます。
-
-### 2. ローカルサーバーで確認する（推奨）
-
-埋め込みウィジェットの読み込みや検証のため、簡易サーバーでの確認を推奨します。
-
-```bash
-python3 -m http.server 8000
-```
-
-その後、ブラウザで以下へアクセスします。
-
-- <http://localhost:8000>
-
-## カスタマイズ
-
-`index.html` 内の各ウィジェット設定 JSON を変更することで、以下を調整できます。
-
-- 通貨ペア（例: `GBP_JPY` / `OANDA:GBPJPY`）
-- 表示サイズ（`width`, `height`）
-- ロケール（`locale`）
-- カラーテーマ（`colorTheme`）
-- テクニカル分析の時間足（`interval`）
-
-## 注意事項
-
-- 本ページは外部サービスのウィジェットに依存するため、インターネット接続が必要です。
-- ウィジェット仕様の変更や配信元の障害により、表示内容が変わる可能性があります。
-- 投資判断は自己責任で行ってください。
+- 本リポジトリは静的配信前提です（サーバーサイド処理なし）。
+- 外部API障害時は一部カードが「取得失敗」表示になります。
 
 ## ライセンス
 
-ライセンス情報は `LICENSE` を参照してください。
+`LICENSE` を参照してください。
