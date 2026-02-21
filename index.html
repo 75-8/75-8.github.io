@@ -12,21 +12,64 @@
     </header>
 <!-- OANDA Widget BEGIN -->
 <div data-order-book></div>
-<script src="https://widget.oanda.jp/order-book.js" async>{"width":"auto","height":"auto","instrument":"GBP_JPY"}</script>
+<script src="https://widget.oanda.jp/order-book.js" async>
+{"width":"auto","height":"auto","instrument":"GBP_JPY"}</script>
 <!-- OANDA Widget END -->
 </br>
 <!-- OANDA Widget BEGIN -->
 <div data-volatility></div>
 <script src="https://widget.oanda.jp/volatility.js" async>
-{"instrument":"GBP_JPY"}</script>
+{"width":"400","height":"400","instrument":"GBP_JPY"}</script>
 </script>
 <!-- OANDA Widget END -->
 
 <!-- OANDA Widget BEGIN -->
 <div data-value-at-risk></div>
 <script src="https://widget.oanda.jp/value-at-risk.js" async>
-{"instrument":"GBP_JPY"}</script>
+{"width":"400","height":"400","instrument":"GBP_JPY"}</script>
 <!-- OANDA Widget END -->
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://jp.tradingview.com/markets/currencies/cross-rates-overview-heat-map/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+  {
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "locale": "ja",
+  "currencies": [
+    "USD",
+    "JPY",
+    "GBP",
+    "EUR"
+  ],
+  "backgroundColor": "#0F0F0F",
+  "width": 400,
+  "height": 400
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://jp.tradingview.com/news-flow/?priority=top_stories" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+  {
+  "displayMode": "compact",
+  "feedMode": "all_symbols",
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "locale": "ja",
+  "width": 400,
+  "height": 400
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
 </br>
 <!-- OANDA Widget BEGIN -->
 <div data-price-comparison></div>
@@ -45,12 +88,54 @@
 <!-- TradingView Widget BEGIN -->
 <div class="tradingview-widget-container">
   <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://jp.tradingview.com/symbols/OANDA-USDJPY/?exchange=OANDA" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {
+  "allow_symbol_change": false,
+  "calendar": false,
+  "details": true,
+  "hide_side_toolbar": true,
+  "hide_top_toolbar": true,
+  "hide_legend": false,
+  "hide_volume": true,
+  "hotlist": false,
+  "interval": "W",
+  "locale": "ja",
+  "save_image": false,
+  "style": "1",
+  "symbol": "OANDA:USDJPY",
+  "theme": "dark",
+  "timezone": "Asia/Tokyo",
+  "backgroundColor": "#0F0F0F",
+  "gridColor": "rgba(242, 242, 242, 0.06)",
+  "watchlist": [],
+  "withdateranges": false,
+  "compareSymbols": [
+    {
+      "symbol": "OANDA:GBPJPY",
+      "position": "SameScale"
+    }
+  ],
+  "studies": [
+    "STD;Zig_Zag",
+    "STD;PSAR"
+  ],
+  "width": "auto",
+  "height": 550
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
   <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
   {
   "interval": "1m",
   "width": "auto",
   "isTransparent": false,
-  "height": "450",
+  "height": "400",
   "symbol": "OANDA:GBPJPY",
   "showIntervalTabs": true,
   "displayMode": "multiple",
@@ -71,7 +156,7 @@
   "colorTheme": "dark",
   "isTransparent": false,
   "width": "auto",
-  "height": "550",
+  "height": "500",
   "locale": "ja",
   "importanceFilter": "-1,0,1",
   "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
