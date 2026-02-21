@@ -1,88 +1,192 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>portal</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>portal</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>portal</h1>
-    </header>
-<!-- OANDA Widget BEGIN -->
-<div data-order-book></div>
-<script src="https://widget.oanda.jp/order-book.js" async>{"width":"auto","height":"auto","instrument":"GBP_JPY"}</script>
-<!-- OANDA Widget END -->
-</br>
-<!-- OANDA Widget BEGIN -->
-<div data-volatility></div>
-<script src="https://widget.oanda.jp/volatility.js" async>
-{"instrument":"GBP_JPY"}</script>
-</script>
-<!-- OANDA Widget END -->
+  <header>
+    <h1>portal</h1>
+    <p>GitHub Pages で動作する GBP/JPY マーケットダッシュボード</p>
+  </header>
 
-<!-- OANDA Widget BEGIN -->
-<div data-value-at-risk></div>
-<script src="https://widget.oanda.jp/value-at-risk.js" async>
-{"instrument":"GBP_JPY"}</script>
-<!-- OANDA Widget END -->
-</br>
-<!-- OANDA Widget BEGIN -->
-<div data-price-comparison></div>
-<script src="https://widget.oanda.jp/price-comparison.js" async>
-{"width":"auto","instrument":"GBP_JPY"}</script>
-<!-- OANDA Widget END -->
-</br>
-<!-- OANDA Widget BEGIN -->
-<div data-var-on-chart></div>
-<script src="https://widget.oanda.jp/var-on-chart.js" async>
-{"width":"auto","instrument":"GBP_JPY"}</script></script>
-<!-- OANDA Widget END -->
+  <main>
+    <section class="panel">
+      <h2>OANDA機能の静的代替（GitHub Pages対応）</h2>
+      <p class="muted">データ取得元: Frankfurter API（為替終値） / クライアントサイド計算</p>
+      <div id="status" class="status">データ取得中...</div>
+      <div class="grid">
+        <article class="card">
+          <h3>Order Book 代替（Market Pressure）</h3>
+          <div id="pressure"></div>
+        </article>
+        <article class="card">
+          <h3>Volatility 代替（20日ヒストリカル）</h3>
+          <p id="volatility" class="metric">--</p>
+        </article>
+        <article class="card">
+          <h3>Value at Risk 代替（ヒストリカル法）</h3>
+          <p id="var95" class="metric">95% VaR: --</p>
+          <p id="var99" class="metric">99% VaR: --</p>
+        </article>
+        <article class="card">
+          <h3>Price Comparison 代替（終値クロス）</h3>
+          <table>
+            <thead><tr><th>Pair</th><th>Rate</th></tr></thead>
+            <tbody id="compare-table"></tbody>
+          </table>
+        </article>
+      </div>
+      <article class="card full">
+        <h3>VaR on Chart 代替（GBP/JPY + 95%損失閾値）</h3>
+        <svg id="var-chart" viewBox="0 0 800 260" preserveAspectRatio="none"></svg>
+      </article>
+    </section>
 
-</br>
+    <section class="panel">
+      <h2>TradingView ウィジェット</h2>
 
-<!-- TradingView Widget BEGIN -->
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-  {
-  "interval": "1m",
-  "width": "auto",
-  "isTransparent": false,
-  "height": "450",
-  "symbol": "OANDA:GBPJPY",
-  "showIntervalTabs": true,
-  "displayMode": "multiple",
-  "locale": "ja",
-  "colorTheme": "dark"
-}
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+        {
+          "interval": "1m",
+          "width": "auto",
+          "isTransparent": false,
+          "height": "400",
+          "symbol": "OANDA:GBPJPY",
+          "showIntervalTabs": true,
+          "displayMode": "multiple",
+          "locale": "ja",
+          "colorTheme": "dark"
+        }
+        </script>
+      </div>
+
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+        {
+          "colorTheme": "dark",
+          "isTransparent": false,
+          "width": "auto",
+          "height": "500",
+          "locale": "ja",
+          "importanceFilter": "-1,0,1",
+          "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
+        }
+        </script>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>seto</p>
+  </footer>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const pressureEl = document.getElementById('pressure');
+    const volatilityEl = document.getElementById('volatility');
+    const var95El = document.getElementById('var95');
+    const var99El = document.getElementById('var99');
+    const compareTableEl = document.getElementById('compare-table');
+    const chartEl = document.getElementById('var-chart');
+
+    function percentile(arr, p) {
+      const sorted = [...arr].sort((a, b) => a - b);
+      const idx = Math.max(0, Math.min(sorted.length - 1, Math.floor((p / 100) * sorted.length)));
+      return sorted[idx];
+    }
+
+    function stddev(values) {
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      const variance = values.reduce((a, v) => a + (v - mean) ** 2, 0) / values.length;
+      return Math.sqrt(variance);
+    }
+
+    function toPath(values, min, max, width, height) {
+      return values.map((v, i) => {
+        const x = (i / (values.length - 1)) * width;
+        const y = height - ((v - min) / (max - min || 1)) * height;
+        return `${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
+      }).join(' ');
+    }
+
+    async function loadRates() {
+      try {
+        const end = new Date();
+        const start = new Date();
+        start.setDate(end.getDate() - 120);
+        const fmt = (d) => d.toISOString().slice(0, 10);
+        const url = `https://api.frankfurter.app/${fmt(start)}..${fmt(end)}?from=GBP&to=JPY,USD,EUR`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        const data = await res.json();
+        const points = Object.entries(data.rates)
+          .map(([date, r]) => ({ date, gbpjpy: r.JPY, usd: r.USD, eur: r.EUR }))
+          .sort((a, b) => a.date.localeCompare(b.date));
+
+        if (points.length < 30) throw new Error('insufficient data');
+
+        const prices = points.map(p => p.gbpjpy);
+        const returns = prices.slice(1).map((p, i) => (p / prices[i]) - 1);
+
+        const lookback = returns.slice(-20);
+        const dailyVol = stddev(lookback);
+        const annualVol = dailyVol * Math.sqrt(252);
+        volatilityEl.textContent = `${(annualVol * 100).toFixed(2)}% (年率換算)`;
+
+        const q5 = percentile(returns, 5);
+        const q1 = percentile(returns, 1);
+        var95El.textContent = `95% VaR: ${(Math.abs(q5) * 100).toFixed(2)}%`;
+        var99El.textContent = `99% VaR: ${(Math.abs(q1) * 100).toFixed(2)}%`;
+
+        const up = returns.filter(r => r > 0).length;
+        const down = returns.filter(r => r < 0).length;
+        const total = up + down || 1;
+        const buyPct = Math.round((up / total) * 100);
+        const sellPct = 100 - buyPct;
+        pressureEl.innerHTML = `
+          <div class="bar"><span class="buy" style="width:${buyPct}%">BUY ${buyPct}%</span><span class="sell" style="width:${sellPct}%">SELL ${sellPct}%</span></div>
+          <p class="muted">※ 上昇/下落日数比から作る擬似板情報</p>`;
+
+        const last = points[points.length - 1];
+        const usdJpy = last.gbpjpy / last.usd;
+        const eurJpy = last.gbpjpy / last.eur;
+        compareTableEl.innerHTML = `
+          <tr><td>GBP/JPY</td><td>${last.gbpjpy.toFixed(3)}</td></tr>
+          <tr><td>USD/JPY</td><td>${usdJpy.toFixed(3)}</td></tr>
+          <tr><td>EUR/JPY</td><td>${eurJpy.toFixed(3)}</td></tr>`;
+
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        const width = 800;
+        const height = 220;
+        const path = toPath(prices, min, max, width, height);
+        const varLevel = prices[prices.length - 1] * (1 - Math.abs(q5));
+        const yVar = height - ((varLevel - min) / (max - min || 1)) * height;
+
+        chartEl.innerHTML = `
+          <rect x="0" y="0" width="800" height="220" fill="#0f172a"></rect>
+          <path d="${path}" stroke="#38bdf8" stroke-width="2" fill="none"></path>
+          <line x1="0" y1="${yVar.toFixed(2)}" x2="800" y2="${yVar.toFixed(2)}" stroke="#f59e0b" stroke-dasharray="6 6"></line>
+          <text x="8" y="18" fill="#e2e8f0" font-size="14">GBP/JPY close</text>
+          <text x="8" y="36" fill="#f59e0b" font-size="14">95% VaR level (${varLevel.toFixed(2)})</text>`;
+
+        statusEl.textContent = `更新: ${last.date} / データ点: ${points.length}`;
+        statusEl.classList.add('ok');
+      } catch (e) {
+        statusEl.textContent = `データ取得に失敗しました: ${e.message}`;
+        statusEl.classList.add('error');
+        pressureEl.textContent = 'API取得失敗時は表示できません。';
+      }
+    }
+
+    loadRates();
   </script>
-</div>
-<!-- TradingView Widget END -->
-
-</br>
-
-<!-- TradingView Widget BEGIN -->
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-  {
-  "colorTheme": "dark",
-  "isTransparent": false,
-  "width": "auto",
-  "height": "550",
-  "locale": "ja",
-  "importanceFilter": "-1,0,1",
-  "countryFilter": "ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu"
-}
-  </script>
-</div>
-<!-- TradingView Widget END -->
-    </main>
-
-    <footer>
-        <p>seto</p>
-    </footer>
 </body>
 </html>
