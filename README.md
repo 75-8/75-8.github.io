@@ -1,55 +1,69 @@
 # portal
 
-GitHub Pages で公開できる、GBP/JPY 中心の静的マーケットダッシュボードです。
+`portal` は、**GBP/JPY（ポンド円）を中心とした相場情報を 1 ページに集約表示するシンプルな静的ページ**です。
 
-## 目的
+`index.html` では、OANDA と TradingView の埋め込みウィジェットを読み込み、注文状況・ボラティリティ・VaR・価格比較・テクニカル分析・経済イベントをまとめて確認できる構成になっています。
 
-以前の OANDA 埋め込み（`widget.oanda.jp`）は GitHub Pages 上で接続拒否となるため、
-**同等機能を静的実装 + TradingView 補助で代替**しています。
+## 主な機能
 
-## OANDA機能と代替実装（Plan）
+- OANDA Order Book（注文情報）
+- OANDA Volatility（ボラティリティ）
+- OANDA Value at Risk（VaR）
+- OANDA Price Comparison（価格比較）
+- OANDA VaR on Chart（チャート上の VaR）
+- TradingView Technical Analysis（テクニカル分析）
+- TradingView Events（経済イベント）
 
-- Order Book → 「Market Pressure」
-  - 直近リターンの上昇/下落日数比を BUY/SELL バーで可視化
-- Volatility → ヒストリカルボラティリティ
-  - 20日リターンの標準偏差を年率換算
-- Value at Risk → ヒストリカル VaR
-  - リターン分布から 95% / 99% VaR を算出
-- Price Comparison → クロスレート比較
-  - GBP/JPY, USD/JPY, EUR/JPY を同一データから表示
-- VaR on Chart → ラインチャート + VaR 閾値ライン
-  - GBP/JPY 終値系列に 95%VaR 水準を重ねて表示
+## 技術構成
 
-## データソース
-
-- Frankfurter API（為替時系列）
-  - `https://api.frankfurter.app/`
-- TradingView 埋め込みウィジェット
-  - テクニカル分析 / 経済イベント
+- HTML（`index.html`）
+- 外部埋め込みスクリプト
+  - `widget.oanda.jp`
+  - `s3.tradingview.com`
 
 ## ファイル構成
 
 ```text
 .
 ├── index.html
-├── styles.css
-├── README.md
-└── LICENSE
+├── LICENSE
+└── README.md
 ```
 
-## ローカル確認
+## 使い方
+
+### 1. ローカルで開く
+
+最小構成の静的ページなので、`index.html` をブラウザで直接開くだけでも表示できます。
+
+### 2. ローカルサーバーで確認する（推奨）
+
+埋め込みウィジェットの読み込みや検証のため、簡易サーバーでの確認を推奨します。
 
 ```bash
 python3 -m http.server 8000
 ```
 
-ブラウザで <http://localhost:8000> を開きます。
+その後、ブラウザで以下へアクセスします。
 
-## 注意
+- <http://localhost:8000>
 
-- 本リポジトリは静的配信前提です（サーバーサイド処理なし）。
-- 外部API障害時は一部カードが「取得失敗」表示になります。
+## カスタマイズ
+
+`index.html` 内の各ウィジェット設定 JSON を変更することで、以下を調整できます。
+
+- 通貨ペア（例: `GBP_JPY` / `OANDA:GBPJPY`）
+- 表示サイズ（`width`, `height`）
+- ロケール（`locale`）
+- カラーテーマ（`colorTheme`）
+- テクニカル分析の時間足（`interval`）
+
+## 注意事項
+
+- 本ページは外部サービスのウィジェットに依存するため、インターネット接続が必要です。
+- ウィジェット仕様の変更や配信元の障害により、表示内容が変わる可能性があります。
+- 投資判断は自己責任で行ってください。
 
 ## ライセンス
 
-`LICENSE` を参照してください。
+ライセンス情報は `LICENSE` を参照してください。
